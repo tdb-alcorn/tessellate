@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Tessellate</title>
+        <style type="text/css">
+            #input {
+                border: 1px solid black;
+            }
+        </style>
+        <script type="text/javascript">
+            let path;
+            let drawing = false;
+            function tessellate() {
+                const resultCanvas = document.getElementById("result");
+                const ctx = resultCanvas.getContext("2d");
+                ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+                const img = document.getElementById("input");
+                for (let i=0; i<4; i++) {
+                    for (let j=0; j<3; j++) {
+                        ctx.drawImage(img, i * 200, j * 200, 200, 200);
+                    }
+                }
+            }
+            function drawMouse(canvas) {
+                const ctx = canvas.getContext("2d");
+                const bounds = canvas.getBoundingClientRect();
+                path = new Path2D();
+                return function(e) {
+                    path.lineTo(e.pageX - bounds.left, e.pageY - bounds.top);
+                    ctx.stroke(path);
+                }
+            }
+            function clearAll() {
+                const input = document.getElementById("input");
+                const ctx = input.getContext("2d");
+                ctx.clearRect(0, 0, input.width, input.height);
+                tessellate();
+            }
+            function onLoad() {
+                const input = document.getElementById("input");
+                input.addEventListener("click", function() {
+                    drawing = !drawing;
+                    if (drawing) {
+                        input.onmousemove = drawMouse(input);
+                    } else {
+                        input.onmousemove = function() {};
+                    }
+                });
+            }
+        </script>
+        <body onload="onLoad();">
+            <div>
+                <h3>Input</h3>
+                <canvas id="input" width="200" height="200"></canvas>
+                <input type="button" onclick="tessellate();" value="Tessellate!">
+                <input type="button" onclick="clearAll();" value="Clear">
+                <h3>Result</h3>
+                <canvas id="result" width="800" height="600"></canvas>
+            </div>
+        </body>
+</html>
